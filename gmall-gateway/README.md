@@ -124,3 +124,34 @@ Controller 处理完通过网关将响应送达 nginx, 通过 nginx 将结果响
 
 ![](https://cdn.jsdelivr.net/gh/yiki-oss/imgs@main/20210622141159.png)
 
+## 跨域
+
+* 跨域其实是浏览器对 javascript 的同源策略造成的(地址栏中的地址和访问远程接口的地址不一致)
+  * `http://manager.gmall.com:80/xxxx`
+    * 协议名称不一致(http & https)
+    * 一级域名不同(gmall.com & jd.com)
+    * 二级域名或者三级域名等不同(api.gmall.com & manager.gmall.com)
+    * 端口号不同(80 & 8080)
+
+* 跨域问题(浏览器针对 ajax 请求的一种限制, 保证数据安全)
+  * 跨域并不会总是有跨域问题, 静态资源就不会出现跨域问题
+
+* 解决方案
+  * jsonp: 只能解决 get 请求的跨域问题
+    * 前后端人员的深度协同
+  * nginx: 
+    * 反向代理为不跨域
+    * 配置 cors 跨域: 违反了 devops 思想
+  * 在 controller 加入 @CorsOrigin(每个 controller 都要加入此注解比较麻烦)
+  * cors(w3c 标准, 全程跨域资源共享)
+    * 每一个请求会发送两次
+      * 预检请求
+        * IPTIONS
+      * 真正的请求
+        * 403 跨域被阻塞
+    * spring 框架提供了 两个 cors 跨域的过滤器
+      * CorsFilter: 使用 servlet
+      * CorsWebFilter: 使用 webflux
+        * gateway 基于 webflux
+
+![](https://cdn.jsdelivr.net/gh/yiki-oss/imgs@main/20210610194300.png)
